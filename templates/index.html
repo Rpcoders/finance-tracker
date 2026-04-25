@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | Finance Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS FIXED -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<!-- OVERLAY -->
+<div id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+    <div class="logo">💰 Finance Tracker</div>
+
+    <div>
+        <button onclick="toggleSidebar()">☰</button>
+        <button onclick="toggleMode()">🌙</button>
+    </div>
+</div>
+
+<!-- SIDEBAR -->
+<div id="sidebar" class="sidebar">
+    <h3>Profile</h3>
+    <p><b>User:</b> {{ user }}</p>
+    <p><b>Total:</b> ₹{{ total }}</p>
+    <p><b>Top:</b> {{ max_cat }}</p>
+
+    <hr>
+
+    <a href="/summary">Insights</a><br><br>
+    <a href="/chart">Charts</a><br><br>
+    <a href="/total">Total</a><br><br>
+
+    <hr>
+
+    <a href="/logout">Logout</a>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+    <!-- CHART DATA (SAFE) -->
+    <script id="chart-data" type="application/json">
+        {
+            "labels": {{ chart_labels | tojson }},
+            "values": {{ chart_values | tojson }}
+        }
+    </script>
+
+    <!-- CHART -->
+    <div class="card">
+        <h3>Spending Breakdown</h3>
+        <canvas id="expenseChart"></canvas>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="grid">
+        <div class="card">
+            <h3>Total Spent</h3>
+            <h2>₹{{ total }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Top Category</h3>
+            <h2>{{ max_cat }}</h2>
+        </div>
+    </div>
+
+    <!-- ADD EXPENSE -->
+    <div class="card">
+        <h3>Add Expense</h3>
+
+        <form action="/add" method="post">
+            <input type="number" name="amount" placeholder="Amount" required>
+
+            <select name="category">
+                <option>Food</option>
+                <option>Groceries</option>
+                <option>Shopping</option>
+                <option>Rent</option>
+                <option>Entertainment</option>
+                <option>Health</option>
+                <option>Travel</option>
+                <option>Other</option>
+            </select>
+
+            <input type="text" name="custom_category" placeholder="Custom category">
+
+            <button type="submit">Add Expense</button>
+        </form>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+        <a href="/chart">Chart</a>
+        <a href="/summary">Insights</a>
+        <a href="/delete">Delete</a>
+        <a href="/clear">Clear</a>
+    </div>
+
+    <!-- RECENT -->
+    <h3>Recent Transactions</h3>
+
+    {% for e in expenses[-5:] %}
+    <div class="transaction">
+        <div>
+            <b>₹{{ e.amount }}</b> - {{ e.category }}
+        </div>
+        <small>{{ e.time }}</small>
+    </div>
+    {% endfor %}
+
+</div>
+
+<!-- SCRIPT -->
+<script>
+function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("active");
+    document.getElementById("overlay").classList.toggle("active");
+}
+
+function toggleMode() {
+    document.body.classList.toggle("light");
+
+    localStorage.setItem("theme",
+        document.body.classList.contains("light") ? "light" : "dark"
+    );
+}
+
+window.onload = function () {
+
+    if (localStorage.getItem("theme") === "light") {
+        document.body.classList.add("light");
+    }
+
+    const canvas = document.getElementById("expenseChart");
+    if (!canvas) return;
+
+    let data;
+    try {
+        data = JSON.parse(document.getElementById("chart-data").textContent);
+    } catch (e) {
+        console.log("Chart parse error");
+        return;
+    }
+
+    const labels = data.labels || [];
+    const values = data.values || [];
+
+    if (labels.length === 0 || values.length === 0) return;
+new Chart(canvas, {
+    type: "doughnut",
+    data: {
+        labels: labels,
+        datasets: [{
+            data: values,
+            backgroundColor: [
+                "#4F8CFF",
+                "#22C55E",
+                "#F97316",
+                "#EF4444",
+                "#A855F7",
+                "#14B8A6"
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        cutout: "70%"
+    }
+});
+};
+</script>
+
+</body>
+</html>

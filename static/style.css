@@ -1,0 +1,99 @@
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0B1220;
+    color: white;
+}
+
+body.light {
+    background: #f5f7fb;
+    color: black;
+}
+
+/* AUTH */
+.auth {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.auth-box {
+    text-align: center;
+}
+
+.auth-box input {
+    display: block;
+    width: 250px;
+    margin: 10px auto;
+    padding: 10px;
+}
+
+/* TOPBAR */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background: #111A2E;
+}
+
+/* SIDEBAR */
+.sidebar {
+    position: fixed;
+    left: -250px;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background: #111A2E;
+    padding: 20px;
+    transition: 0.3s;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+/* CONTAINER */
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* CARDS */
+.card {
+    background: #111A2E;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 10px;
+}
+
+/* GRID */
+.grid {
+    display: flex;
+    gap: 10px;
+}
+
+.grid .card {
+    flex: 1;
+}
+
+/* BUTTON */
+button {
+    background: #4F8CFF;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+}
+
+/* ACTIONS */
+.actions a {
+    display: inline-block;
+    background: #4F8CFF;
+    color: white;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 8px;
+    text-decoration: none;
+}
